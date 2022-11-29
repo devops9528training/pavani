@@ -1,0 +1,22 @@
+---
+  - hosts: all
+    remote_user: ec2-user
+    become: true
+    gather_facts: no
+    ignore_errors: true
+    tasks: 
+      - name: Install httpd package
+        yum:
+          name: httpd 
+          state: present
+      - name: Copy file with owner & permissions
+        copy:
+          src: mywebsite.html
+          dest: /var/www/html/
+          owner: ec2-user
+          group: root
+          mode: '0777'
+      - name: Start httpd service
+        service: 
+          name: httpd
+          state: started

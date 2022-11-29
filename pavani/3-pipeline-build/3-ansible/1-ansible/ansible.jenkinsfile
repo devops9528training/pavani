@@ -1,0 +1,27 @@
+pipeline {
+	agent any
+		stages {
+			stage("Prepare build environment") {
+				steps {
+					script {
+						sh '''	
+						echo "Preparing build workspace"
+						# copy files 
+						cp -r /var/lib/jenkins/pavani/3-pipeline-build/3-ansible/1-ansible/* ${WORKSPACE}/
+						'''
+					}
+				}
+			}
+			
+			stage("Ansible") {
+				steps {
+					script {
+						sh '''
+						echo "Executing playbook"
+						sudo ansible-playbook ${WORKSPACE}/httpd.yml -i hosts --key-file "/var/lib/jenkins/pavani/3-pipeline-build/3-ansible/1-ansible/xyz.pem"
+						'''
+						}
+					}
+				}
+			}
+		}

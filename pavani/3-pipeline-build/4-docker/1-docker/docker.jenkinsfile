@@ -1,0 +1,42 @@
+pipeline {
+        agent any
+                stages {
+                        stage("Prepare build environment") {
+                                steps {
+                                        script {
+                                                sh '''
+                                                echo "Preparing build workspace"
+                                                # copy files
+                                                cp -r /var/lib/jenkins/pavani/3-pipeline-build/4-docker/1-docker/* ${WORKSPACE}/
+                                                '''
+                                        }
+                                }
+                        }
+
+                        stage("Docker build") {
+                                steps {
+                                        script {
+                                                sh '''
+                                                echo "Executing docker file"
+                                                cd ${WORKSPACE}/ && sudo docker build -t modified-httpd:latest .
+                                                '''
+                                                }
+                                        }
+                                }
+
+                        stage("Docker push") {
+                                steps {
+                                        script {
+                                                sh '''
+                                                echo "create container from image"
+                                                sudo docker run -t -d --name mytemp2 modified-httpd
+                                                echo "docker commit"
+                                                sudo docker commit mytemp2 wiculty9528/new-image-1.0
+                                                echo "docker push"
+                                                sudo docker push wiculty9528/new-image-1.0:latest
+                                                '''
+                                                }
+                                        }
+                                }
+                        }
+                }

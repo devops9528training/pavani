@@ -1,0 +1,25 @@
+pipeline {
+	agent any
+		stages {
+			stage("Prepare Environment") {
+				steps {
+					script {
+						sh '''
+						cp -r /var/lib/jenkins/pavani/3-pipeline-build/1-maven/1-generic-build/* ${WORKSPACE}/
+						'''
+						}
+					}
+				}
+
+			stage("Build") {
+				steps {
+					script {
+						sh '''
+						echo "Build java artifact"
+						cd ${WORKSPACE} && mvn package
+						'''
+						}
+					}
+				}
+			}
+		}
